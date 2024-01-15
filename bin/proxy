@@ -6,7 +6,7 @@ set -e
 unset GIT_DIR
 
 SCRIPT_NAME="$1"
-if [ "$SCRIPT_NAME" != "bin/detect" || "$SCRIPT_NAME" != "bin/compile" || "$SCRIPT_NAME" != "bin/release" ] then;
+if [ "$SCRIPT_NAME" != "bin/detect" || "$SCRIPT_NAME" != "bin/compile" || "$SCRIPT_NAME" != "bin/release" ] then
   echo "Unknown SCRIPT_NAME: $SCRIPT_NAME" 1>&2
   exit 1
 fi

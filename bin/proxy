@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -e
+
+# clean up leaking environment
+unset GIT_DIR
+
+SCRIPT_NAME="$1"
+if [ "$SCRIPT_NAME" != "bin/detect" || "$SCRIPT_NAME" != "bin/compile" || "$SCRIPT_NAME" != "bin/release" ] then;
+  echo "Unknown SCRIPT_NAME: $SCRIPT_NAME" 1>&2
+  exit 1
+fi
+shift
+
+# BUILDPACK_DIR="$(dirname "$(dirname "$0")")"
+
+if [ "$PRIVATE_BUILDPACK_REPO" == "" || "$PRIVATE_BUILDPACK_KEY" == "" ]; then
+  echo 'Need $PRIVATE_BUILDPACK_REPO AND $PRIVATE_BUILDPACK_KEY' 1>&2
+  exit 1
+fi
+
+PRIVATE_BUILDPACK_DIR="$(basename $PRIVATE_BUILDPACK_REPO .git)"
+
+if [ "$PRIVATE_BUILDPACK_DIR" == "" ]; then
+  echo '$PRIVATE_BUILDPACK_DIR is empty' 1>&2
+  exit 1
+fi
+
+if [ -n "$PRIVATE_BUILDPACK_KEY" ]; then
+  GIT_SSH_COMMAND="ssh -i <(echo \"$PRIVATE_BUILDPACK_KEY\")" git clone $PRIVATE_BUILDPACK_REPO
+fi
+
+cd $PRIVATE_BUILDPACK_DIR
+
+exec "$SCRIPT_NAME" $@

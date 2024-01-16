@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -xe
 
 # clean up leaking environment
 unset GIT_DIR

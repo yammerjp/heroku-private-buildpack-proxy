@@ -26,10 +26,15 @@ if [ "$PRIVATE_BUILDPACK_DIR" == "" ]; then
   exit 1
 fi
 
-if [ -n "$PRIVATE_BUILDPACK_KEY" ]; then
-  GIT_SSH_COMMAND="ssh -i <(echo \"$PRIVATE_BUILDPACK_KEY\")" git clone $PRIVATE_BUILDPACK_REPO
+if [ -n "$PRIVATE_BUILDPACK_REPO" ]; then
+  GIT_SSH_COMMAND="ssh -i <(echo \"$PRIVATE_BUILDPACK_KEY\")" git clone --depth 1 --branch "${PRIVATE_BUILDPACK_BRANCH:-main}" "$PRIVATE_BUILDPACK_REPO"
 fi
 
 cd $PRIVATE_BUILDPACK_DIR
+
+if [ -n "$SCRIPT_NAME" ]; then
+  echo "$SCRIPT_NAME is not found" 1>&2
+  exit 1
+fi
 
 exec "$SCRIPT_NAME" $@
